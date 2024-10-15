@@ -2,7 +2,7 @@ import random
 
 
 class Player:
-    VERSION = "0.3"
+    VERSION = "1.0"
 
     def showdown(self, game_state):
         return ""
