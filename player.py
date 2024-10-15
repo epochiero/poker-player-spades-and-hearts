@@ -24,20 +24,30 @@ class Player:
         my_money = my_player['stack']
         my_cards = my_player['hole_cards']
         my_cards_ranks = [c['rank'] for c in my_player['hole_cards']]
-        # community_cards = game_state['community_cards']
+        community_cards = game_state['community_cards']
+        community_cards_ranks = [c['rank'] for c in community_cards]
 
-        if self.has_duplicates(my_cards_ranks):
-            return current_buy_in - my_bet # call
+        call_bet = current_buy_in - my_bet # call
+        raise_bet = current_buy_in - my_bet + minimum_raise # raise
+
+
+        if self.has_double_match(my_cards_ranks, community_cards_ranks):
+            return raise_bet * 2
+        elif self.has_duplicates(my_cards_ranks):
+            return raise_bet
+        elif self.has_one_match(my_cards_ranks, community_cards_ranks):
+            return call_bet
         else:
             return 0
 
-
-        # if random.randint(0, 1) == 1:
-        #     # Raise
-        #     return current_buy_in - my_bet + minimum_raise
-        # else:
-        #     # Call
-        #     return current_buy_in - my_bet
-
     def has_duplicates(self, array):
         return len(array) != len(set(array))
+
+    def has_common_elements(self, arr1, arr2):
+        return not set(arr1).isdisjoint(arr2)
+
+    def has_one_match(self, my_card, community_card):
+        return len(set(my_card) & set(community_card)) == 1
+
+    def has_double_match(self, my_card, community_card):
+        return len(set(my_card) & set(community_card)) == 2
