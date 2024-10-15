@@ -1,10 +1,8 @@
-import random
 from collections import Counter
-from itertools import filterfalse
 
 
 class Player:
-    VERSION = "1.2"
+    VERSION = "1.4"
 
     def showdown(self, game_state):
         return ""
@@ -40,34 +38,39 @@ class Player:
         call_bet = current_buy_in - my_bet # call
         raise_bet = current_buy_in - my_bet + minimum_raise # raise
 
-        # if not community_cards and self.pay_for_community_cards(my_cards):
-        #     print("pay for community cards")
+        # if self.has_full_house(my_cards_suits, community_cards_suits):
+        #     print("### full house")
+        #     return raise_bet * 6
 
-        if self.has_flush(all_card_suits):
-            print("flush")
-            return raise_bet * 5
+        # if self.has_flush(my_cards_ranks):
+        #     print("### flush")
+        #     return raise_bet * 5
 
         if self.has_straight(my_cards_ranks, community_cards_ranks):
-            print("straight")
+            print("### straight")
             return raise_bet * 4
 
         if self.has_3_match(my_cards_ranks, community_cards_ranks):
-            print("3 match")
+            print("### 3 match")
             return raise_bet * 3
 
         if self.has_double_match(my_cards_ranks, community_cards_ranks):
-            print("double")
+            print("### double")
             return raise_bet * 2
 
         if self.has_duplicates(my_cards_ranks):
-            print("duplicates")
+            print("### duplicates")
             return raise_bet
 
         if self.has_one_match(my_cards_ranks, community_cards_ranks):
-            print("one match")
+            print("### one match")
             return call_bet
 
-        print("fold")
+        if not community_cards and self.pay_for_community_cards(my_cards_ranks):
+            print("### pay_for_community_cards")
+            return call_bet
+
+        print("### fold")
         return 0
 
     def has_duplicates(self, array):
@@ -115,8 +118,15 @@ class Player:
         # Using Counter to count the occurrences of each element in the array
         return dict(Counter(arr))
 
-    # def pay_for_community_cards(self, my_cards):
-    #     first_card_match = self.has_one_match([my_cards[0]], ['J', 'Q', 'K', 'A'])
-    #     second_card_match = self.has_one_match([my_cards[1]], ['J', 'Q', 'K', 'A'])
-    #
-    #     return first_card_match and second_card_match
+    def pay_for_community_cards(self, my_cards):
+        first_card_match = self.has_one_match([my_cards[0]], ['J', 'Q', 'K', 'A'])
+        second_card_match = self.has_one_match([my_cards[1]], ['J', 'Q', 'K', 'A'])
+
+        return first_card_match or second_card_match
+
+    def has_full_house(self, my_cards, community_cards):
+        element_counts = Counter(my_cards + community_cards)
+        values_with_three = [key for key, count in element_counts.items() if count == 3]
+        values_with_two = [key for key, count in element_counts.items() if count == 2]
+
+        return len(values_with_three) == 1 and len(values_with_two) == 1

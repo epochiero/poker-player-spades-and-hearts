@@ -77,3 +77,35 @@ res = player.betRequest(game_state_mock)
 
 print(res)
 assert int(res) > 0
+
+
+
+def test_has_full_house():
+    request = copy.deepcopy(game_state_mock)
+    request['players'][1]["hole_cards"] = [
+        {
+            "rank": "A",
+            "suit": "clubs"
+        },
+        {
+            "rank": "5",
+            "suit": "hearts"
+        }
+    ]
+    request['community_cards'] = [
+        {
+            "rank": "8",
+            "suit": "clubs"
+        },
+        {
+            "rank": "9",
+            "suit": "hearts"
+        },
+        {
+            "rank": "10",
+            "suit": "hearts"
+        }
+    ]
+    player = Player()
+    res = player.betRequest(request)
+    assert res == 180
