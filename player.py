@@ -40,8 +40,8 @@ class Player:
         call_bet = current_buy_in - my_bet # call
         raise_bet = current_buy_in - my_bet + minimum_raise # raise
 
-        if not community_cards and self.pay_for_community_cards(my_cards):
-            print("pay for community cards")
+        # if not community_cards and self.pay_for_community_cards(my_cards):
+        #     print("pay for community cards")
 
         if self.has_flush(all_card_suits):
             print("flush")
@@ -115,8 +115,8 @@ class Player:
         # Using Counter to count the occurrences of each element in the array
         return dict(Counter(arr))
 
-    def pay_for_community_cards(self, my_cards):
-        first_card_match = self.has_one_match([my_cards[0]], ['J', 'Q', 'K', 'A'])
-        second_card_match = self.has_one_match([my_cards[1]], ['J', 'Q', 'K', 'A'])
-
-        return first_card_match and second_card_match
+    # def pay_for_community_cards(self, my_cards):
+    #     first_card_match = self.has_one_match([my_cards[0]], ['J', 'Q', 'K', 'A'])
+    #     second_card_match = self.has_one_match([my_cards[1]], ['J', 'Q', 'K', 'A'])
+    #
+    #     return first_card_match and second_card_match
