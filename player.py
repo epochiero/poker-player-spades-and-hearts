@@ -2,7 +2,7 @@ import random
 
 
 class Player:
-    VERSION = "0.1"
+    VERSION = "0.2"
 
     def showdown(self, game_state):
         return ""
@@ -17,12 +17,21 @@ class Player:
 
         current_buy_in = game_state['current_buy_in']  # current max bet
         minimum_raise = game_state['minimum_raise']  # current min raise
-        my_index = game_state['in_action']  # my user index in players list
-        my_bet = game_state['players'][my_index]['bet']  # my current bet
+        my_player = game_state['players'][game_state['in_action']]
 
-        if random.randint(0, 1) == 1:
-            # Raise
-            return current_buy_in - my_bet + minimum_raise
-        else:
-            # Call
-            return current_buy_in - my_bet
+        my_bet = my_player['bet']  # my current bet
+        my_money = my_player['stack']
+        my_cards = my_player['hole_cards']
+
+
+
+        return 0
+        # if random.randint(0, 1) == 1:
+        #     # Raise
+        #     return current_buy_in - my_bet + minimum_raise
+        # else:
+        #     # Call
+        #     return current_buy_in - my_bet
+
+    def has_duplicates(self, array):
+        return False
