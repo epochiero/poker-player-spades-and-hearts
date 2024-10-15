@@ -1,10 +1,10 @@
 import random
 from collections import Counter
-from pstats import count_calls
+from itertools import filterfalse
 
 
 class Player:
-    VERSION = "1.0"
+    VERSION = "1.2"
 
     def showdown(self, game_state):
         return ""
@@ -40,22 +40,34 @@ class Player:
         call_bet = current_buy_in - my_bet # call
         raise_bet = current_buy_in - my_bet + minimum_raise # raise
 
+        if not community_cards and self.pay_for_community_cards(my_cards):
+            print("pay for community cards")
+
+        if self.has_flush(all_card_suits):
+            print("flush")
+            return raise_bet * 5
 
         if self.has_straight(my_cards_ranks, community_cards_ranks):
+            print("straight")
             return raise_bet * 4
 
         if self.has_3_match(my_cards_ranks, community_cards_ranks):
+            print("3 match")
             return raise_bet * 3
 
         if self.has_double_match(my_cards_ranks, community_cards_ranks):
+            print("double")
             return raise_bet * 2
 
         if self.has_duplicates(my_cards_ranks):
+            print("duplicates")
             return raise_bet
 
         if self.has_one_match(my_cards_ranks, community_cards_ranks):
+            print("one match")
             return call_bet
 
+        print("fold")
         return 0
 
     def has_duplicates(self, array):
@@ -93,6 +105,18 @@ class Player:
         # Check for consecutive values
         return values[-1] - values[0] == 4 and len(values) == 5
 
+    def has_flush(self, all_cards):
+        element_counts = self.count_elements(all_cards)
+        for elem in element_counts:
+            if element_counts[elem] >= 5 and (all_cards[0] == elem or all_cards[1] == elem):
+                return True
+
     def count_elements(self, arr):
         # Using Counter to count the occurrences of each element in the array
         return dict(Counter(arr))
+
+    def pay_for_community_cards(self, my_cards):
+        first_card_match = self.has_one_match([my_cards[0]], ['J', 'Q', 'K', 'A'])
+        second_card_match = self.has_one_match([my_cards[1]], ['J', 'Q', 'K', 'A'])
+
+        return first_card_match and second_card_match

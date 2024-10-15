@@ -31,11 +31,11 @@ game_state_mock = {
             "hole_cards": [
                 {
                     "rank": "6",
-                    "suit": "hearts"
+                    "suit": "clubs"
                 },
                 {
                     "rank": "K",
-                    "suit": "spades"
+                    "suit": "clubs"
                 }
             ]
         },
@@ -50,8 +50,16 @@ game_state_mock = {
     ],
     "community_cards": [
         {
+            "rank": "4",
+            "suit": "clubs"
+        },
+        {
+            "rank": "5",
+            "suit": "clubs"
+        },
+        {
             "rank": "Q",
-            "suit": "spades"
+            "suit": "clubs"
         },
         {
             "rank": "Q",
@@ -59,7 +67,7 @@ game_state_mock = {
         },
         {
             "rank": "Q",
-            "suit": "clubs"
+            "suit": "hearts"
         }
     ]
 }
