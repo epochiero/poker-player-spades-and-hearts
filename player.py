@@ -1,4 +1,6 @@
 import random
+from collections import Counter
+from pstats import count_calls
 
 
 class Player:
@@ -23,22 +25,38 @@ class Player:
         my_bet = my_player['bet']  # my current bet
         my_money = my_player['stack']
         my_cards = my_player['hole_cards']
-        my_cards_ranks = [c['rank'] for c in my_player['hole_cards']]
         community_cards = game_state['community_cards']
+
+        my_cards_ranks = [c['rank'] for c in my_cards]
+        my_cards_suits = [c['suit'] for c in my_cards]
+
         community_cards_ranks = [c['rank'] for c in community_cards]
+        community_cards_suits = [c['suit'] for c in community_cards]
+
+        all_card_suits = my_cards_suits + community_cards_suits
+        my_cards_suits_matches_community = self.has_common_elements(my_cards_ranks, community_cards_suits)
+        suits_count = self.count_elements(all_card_suits)
 
         call_bet = current_buy_in - my_bet # call
         raise_bet = current_buy_in - my_bet + minimum_raise # raise
 
 
+        if self.has_straight(my_cards_ranks, community_cards_ranks):
+            return raise_bet * 4
+
+        if self.has_3_match(my_cards_ranks, community_cards_ranks):
+            return raise_bet * 3
+
         if self.has_double_match(my_cards_ranks, community_cards_ranks):
             return raise_bet * 2
-        elif self.has_duplicates(my_cards_ranks):
+
+        if self.has_duplicates(my_cards_ranks):
             return raise_bet
-        elif self.has_one_match(my_cards_ranks, community_cards_ranks):
+
+        if self.has_one_match(my_cards_ranks, community_cards_ranks):
             return call_bet
-        else:
-            return 0
+
+        return 0
 
     def has_duplicates(self, array):
         return len(array) != len(set(array))
@@ -51,3 +69,30 @@ class Player:
 
     def has_double_match(self, my_card, community_card):
         return len(set(my_card) & set(community_card)) == 2
+
+    def has_3_match(self, my_card, community_card):
+        element_counts = Counter(my_card+community_card)
+        values_with_three = [key for key, count in element_counts.items() if count == 3]
+        return self.has_one_match(my_card, values_with_three)
+
+
+    def has_straight(self, my_card, community_card):
+        all_cards = my_card + community_card
+        card_values = {
+            '2': 2, '3': 3, '4': 4, '5': 5,
+            '6': 6, '7': 7, '8': 8, '9': 9,
+            '10': 10, 'J': 11, 'Q': 12, 'K': 13, 'A': 14
+        }
+
+        values = sorted(card_values[card] for card in all_cards)
+
+        # Check for duplicates
+        if len(values) != len(set(values)):
+            return False
+
+        # Check for consecutive values
+        return values[-1] - values[0] == 4 and len(values) == 5
+
+    def count_elements(self, arr):
+        # Using Counter to count the occurrences of each element in the array
+        return dict(Counter(arr))

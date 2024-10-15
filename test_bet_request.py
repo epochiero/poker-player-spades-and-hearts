@@ -30,7 +30,7 @@ game_state_mock = {
             "bet": 80,
             "hole_cards": [
                 {
-                    "rank": "Q",
+                    "rank": "6",
                     "suit": "hearts"
                 },
                 {
@@ -50,11 +50,11 @@ game_state_mock = {
     ],
     "community_cards": [
         {
-            "rank": "4",
+            "rank": "Q",
             "suit": "spades"
         },
         {
-            "rank": "K",
+            "rank": "Q",
             "suit": "hearts"
         },
         {
