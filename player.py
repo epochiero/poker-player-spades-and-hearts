@@ -2,7 +2,7 @@ from collections import Counter
 
 
 class Player:
-    VERSION = "3.1"
+    VERSION = "3.2"
 
     def showdown(self, game_state):
         return ""
@@ -35,32 +35,34 @@ class Player:
         my_cards_suits_matches_community = self.has_common_elements(my_cards_ranks, community_cards_suits)
         suits_count = self.count_elements(all_card_suits)
 
+        pot_size = game_state['pot']
+
         call_bet = current_buy_in - my_bet  # call
         raise_bet = current_buy_in - my_bet + minimum_raise  # raise
 
+        # if self.has_4_match(my_cards_ranks, community_cards_ranks):
+        #     print("### 4 match")
+        #     return self.get_bet_size(raise_bet, 8, pot_size)
+
         if self.has_full_house(my_cards_suits, community_cards_suits):
             print("### full house")
-            return raise_bet * 7
+            return self.get_bet_size(raise_bet, 7, pot_size)
 
         if self.has_flush(my_cards_suits+community_cards_suits):
              print("### flush")
-             return raise_bet * 6
-
-        if self.has_4_match(my_cards_ranks, community_cards_ranks):
-            print("### 4 match")
-            return raise_bet * 5
+             return self.get_bet_size(raise_bet, 6, pot_size)
 
         if self.has_straight(my_cards_ranks, community_cards_ranks):
             print("### straight")
-            return raise_bet * 4
+            return self.get_bet_size(raise_bet, 4, pot_size)
 
         if self.has_3_match(my_cards_ranks, community_cards_ranks):
             print("### 3 match")
-            return raise_bet * 3
+            return self.get_bet_size(raise_bet, 3, pot_size)
 
         if self.has_double_match(my_cards_ranks, community_cards_ranks):
             print("### double")
-            return raise_bet * 2
+            return self.get_bet_size(raise_bet, 2, pot_size)
 
         if self.has_duplicates(my_cards_ranks):
             print("### duplicates")
@@ -80,6 +82,10 @@ class Player:
 
         print("### fold")
         return 0
+
+    def get_bet_size(self, minimum_raise, factor, pot_size):
+        pot_factored = pot_size * factor // 10
+        return max(pot_factored - pot_factored % minimum_raise, minimum_raise * factor)
 
     def has_duplicates(self, array):
         return len(array) != len(set(array))
@@ -128,9 +134,12 @@ class Player:
 
     def has_flush(self, all_cards):
         element_counts = self.count_elements(all_cards)
+        print(all_cards)
         for elem in element_counts:
+            print(elem)
             if element_counts[elem] >= 5 and (all_cards[0] == elem or all_cards[1] == elem):
                 return True
+        return False
 
     def count_elements(self, arr):
         # Using Counter to count the occurrences of each element in the array
