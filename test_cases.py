@@ -76,13 +76,13 @@ def test_has_one_match():
         },
         {
             "rank": "K",
-            "suit": "xx"
+            "suit": "hearts"
         }
     ]
     request['community_cards'] = [
         {
             "rank": "K",
-            "suit": "sdsd"
+            "suit": "spades"
         },
         {
             "rank": "3",
@@ -106,17 +106,17 @@ def test_has_duplicates():
         },
         {
             "rank": "6",
-            "suit": "clubs"
+            "suit": "spades"
         }
     ]
     request['community_cards'] = [
         {
             "rank": "K",
-            "suit": "sdsd"
+            "suit": "hearts"
         },
         {
             "rank": "3",
-            "suit": "sdsd"
+            "suit": "spades"
         },
         {
             "rank": "2",
@@ -125,6 +125,7 @@ def test_has_duplicates():
     ]
     player = Player()
     res = player.betRequest(request)
+    print(res)
     assert res == 30
 
 def test_has_double_match():
@@ -142,11 +143,11 @@ def test_has_double_match():
     request['community_cards'] = [
         {
             "rank": "K",
-            "suit": "sdsd"
+            "suit": "hearts"
         },
         {
             "rank": "6",
-            "suit": "sdsd"
+            "suit": "spades"
         },
         {
             "rank": "2",
@@ -166,17 +167,17 @@ def test_has_3_match():
         },
         {
             "rank": "K",
-            "suit": "clubs"
+            "suit": "hearts"
         }
     ]
     request['community_cards'] = [
         {
             "rank": "K",
-            "suit": "sdsd"
+            "suit": "hearts"
         },
         {
             "rank": "7",
-            "suit": "sdsd"
+            "suit": "spades"
         },
         {
             "rank": "K",
@@ -185,6 +186,7 @@ def test_has_3_match():
     ]
     player = Player()
     res = player.betRequest(request)
+    print(res)
     assert res == 90
 
 def test_has_straight():
@@ -202,15 +204,15 @@ def test_has_straight():
     request['community_cards'] = [
         {
             "rank": "8",
-            "suit": "sdsd"
+            "suit": "hearts"
         },
         {
             "rank": "9",
-            "suit": "sdsd"
+            "suit": "hearts"
         },
         {
             "rank": "10",
-            "suit": "clubs"
+            "suit": "spades"
         }
     ]
     player = Player()
@@ -245,7 +247,7 @@ def test_has_flush():
     ]
     player = Player()
     res = player.betRequest(request)
-    assert res == 150
+    assert res == 180
 
 
 def test_pay_for_community_cards():
@@ -312,7 +314,7 @@ def test_has_full_house():
     ]
     player = Player()
     res = player.betRequest(request)
-    assert res == 180
+    assert res == 210
 
 
 def test_has_straight_unit():
@@ -344,7 +346,7 @@ test_has_double_match()
 test_has_3_match()
 test_has_4_match_unit()
 test_has_straight()
-#test_has_flush()
-#test_has_full_house()
+test_has_flush()
+test_has_full_house()
 test_pay_for_community_cards()
 test_pay_for_community_cards_suits()

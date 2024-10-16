@@ -2,7 +2,7 @@ from collections import Counter
 
 
 class Player:
-    VERSION = "3.0"
+    VERSION = "3.1"
 
     def showdown(self, game_state):
         return ""
@@ -35,20 +35,20 @@ class Player:
         my_cards_suits_matches_community = self.has_common_elements(my_cards_ranks, community_cards_suits)
         suits_count = self.count_elements(all_card_suits)
 
-        call_bet = current_buy_in - my_bet # call
-        raise_bet = current_buy_in - my_bet + minimum_raise # raise
+        call_bet = current_buy_in - my_bet  # call
+        raise_bet = current_buy_in - my_bet + minimum_raise  # raise
+
+        if self.has_full_house(my_cards_suits, community_cards_suits):
+            print("### full house")
+            return raise_bet * 7
+
+        if self.has_flush(my_cards_suits+community_cards_suits):
+             print("### flush")
+             return raise_bet * 6
 
         if self.has_4_match(my_cards_ranks, community_cards_ranks):
             print("### 4 match")
             return raise_bet * 5
-
-        # if self.has_full_house(my_cards_suits, community_cards_suits):
-        #     print("### full house")
-        #     return raise_bet * 6
-        #
-        # if self.has_flush(my_cards_suits+community_cards_suits):
-        #     print("### flush")
-        #     return raise_bet * 5
 
         if self.has_straight(my_cards_ranks, community_cards_ranks):
             print("### straight")
@@ -94,7 +94,7 @@ class Player:
         return len(set(my_card) & set(community_card)) == 2
 
     def has_3_match(self, my_card, community_card):
-        element_counts = Counter(my_card+community_card)
+        element_counts = Counter(my_card + community_card)
         values_with_three = [key for key, count in element_counts.items() if count == 3]
         return self.has_one_match(my_card, values_with_three)
 
@@ -146,5 +146,4 @@ class Player:
         element_counts = Counter(my_cards + community_cards)
         values_with_three = [key for key, count in element_counts.items() if count == 3]
         values_with_two = [key for key, count in element_counts.items() if count == 2]
-
         return len(values_with_three) == 1 and len(values_with_two) == 1
