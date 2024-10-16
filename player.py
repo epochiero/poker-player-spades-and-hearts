@@ -2,7 +2,7 @@ from collections import Counter
 
 
 class Player:
-    VERSION = "3.6"
+    VERSION = "3.7"
 
     def showdown(self, game_state):
         return ""
@@ -40,9 +40,9 @@ class Player:
         call_bet = current_buy_in - my_bet  # call
         raise_bet = current_buy_in - my_bet + minimum_raise  # raise
 
-        if self.has_4_match(my_cards_ranks, community_cards_ranks):
-             print("### 4 match")
-             return self.get_bet_size(raise_bet, 8, pot_size)
+        #if self.has_4_match(my_cards_ranks, community_cards_ranks):
+        #     print("### 4 match")
+        #     return self.get_bet_size(raise_bet, 8, pot_size)
 
         if self.has_full_house(my_cards_ranks, community_cards_ranks):
             print("### full house")
