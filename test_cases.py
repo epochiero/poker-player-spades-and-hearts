@@ -1,6 +1,7 @@
 import copy
 
 from player import Player
+from test_bet_request import player
 
 game_state_mock = {
     "tournament_id": "550d1d68cd7bd10003000003",
@@ -291,7 +292,7 @@ def test_has_full_house():
     request['players'][1]["hole_cards"] = [
         {
             "rank": "A",
-            "suit": "clubs"
+            "suit": "hearts"
         },
         {
             "rank": "A",
@@ -305,7 +306,7 @@ def test_has_full_house():
         },
         {
             "rank": "8",
-            "suit": "hearts"
+            "suit": "clubs"
         },
         {
             "rank": "8",
@@ -314,8 +315,35 @@ def test_has_full_house():
     ]
     player = Player()
     res = player.betRequest(request)
-    assert res == 210
+    assert res == 270
 
+def test_has_one_match_unit():
+    player = Player()
+    assert player.has_one_match(["2", "3"], ["5", "6", "7"]) is False
+    assert player.has_one_match(["2", "3"], ["4", "5", "6", "7"]) is False
+    assert player.has_one_match(["7", "9"], ["A", "6", "8", "Q", "10"]) is False
+    assert player.has_one_match(["A", "3"], ["A", "2", "5", "4"]) is True
+    assert player.has_one_match(["5", "6"], ["7", "2", "5", "4"]) is True
+    assert player.has_one_match(["K", "A"], ["2", "3", "4"]) is False
+
+def test_has_duplicates_unit():
+    player = Player()
+    assert player.has_duplicates(["2", "3"]) is False
+    assert player.has_duplicates(["2", "2"]) is True
+    assert player.has_duplicates(["2", "2", "3"]) is True
+    assert player.has_duplicates(["2", "3", "4"]) is False
+    assert player.has_duplicates(["2", "3", "4", "4"]) is True
+    assert player.has_duplicates(["2", "3", "4", "4", "4"]) is True
+    assert player.has_duplicates(["2", "3", "4", "5", "6"]) is False
+
+def test_has_double_match_unit():
+    player = Player()
+    assert player.has_double_match(["2", "3"], ["2", "6", "7"]) is False
+    assert player.has_double_match(["2", "3"], ["4", "3", "6", "7"]) is False
+    assert player.has_double_match(["7", "9"], ["7", "6", "8", "9", "K"]) is True
+    assert player.has_double_match(["A", "3"], ["A", "2", "5", "4"]) is False
+    assert player.has_double_match(["5", "6"], ["7", "2", "5", "4"]) is False
+    assert player.has_double_match(["K", "K"], ["2", "2", "4"]) is False
 
 def test_has_straight_unit():
     player = Player()
@@ -339,14 +367,26 @@ def test_has_4_match_unit():
     assert player.has_4_match(["3", "3"], ["3", "K", "3", "2", "2"]) is True
     assert player.has_4_match(["3", "3"], ["A", "K", "2", "2", "2"]) is False
 
+def test_has_flush_unit():
+    player = Player()
+    assert player.has_flush(["clubs", "clubs", "clubs", "clubs", "clubs"]) is True
+    assert player.has_flush(["clubs", "hearts", "clubs", "clubs", "clubs", "clubs"]) is True
+    assert player.has_flush(["spades", "hearts", "clubs", "clubs", "clubs", "clubs", "clubs"]) is False
 
-test_has_one_match()
-test_has_duplicates()
-test_has_double_match()
-test_has_3_match()
+def test_get_bet_size():
+    player = Player()
+    assert player.get_bet_size(10, 5, 500) == 250
+    assert player.get_bet_size(10, 5, 20) == 50
+    assert player.get_bet_size(3, 5, 200) == 99
+
+test_has_one_match_unit()
+test_has_duplicates_unit()
+test_has_double_match_unit()
+test_has_3_match_unit()
 test_has_4_match_unit()
-test_has_straight()
-test_has_flush()
+test_has_straight_unit()
+test_has_flush_unit()
 test_has_full_house()
 test_pay_for_community_cards()
 test_pay_for_community_cards_suits()
+test_get_bet_size()

@@ -2,7 +2,7 @@ from collections import Counter
 
 
 class Player:
-    VERSION = "3.5"
+    VERSION = "3.6"
 
     def showdown(self, game_state):
         return ""
@@ -64,13 +64,34 @@ class Player:
             print("### double")
             return self.get_bet_size(raise_bet, 2, pot_size)
 
+        # if self.has_duplicates(my_cards_ranks):
+        #     print("### duplicates")
+        #     return raise_bet
         if self.has_duplicates(my_cards_ranks):
             print("### duplicates")
-            return raise_bet
+            matched_card = my_cards_ranks[0]
 
+            # If High Pair
+            if self.has_one_match(matched_card, ['J', 'Q', 'K', 'A']):
+                return raise_bet
+
+            if not community_cards:
+                return call_bet if call_bet <= 200 else 0
+            else:
+                return 0
+
+
+        # if self.has_one_match(my_cards_ranks, community_cards_ranks):
+        #     print("### one match")
+        #     return call_bet
         if self.has_one_match(my_cards_ranks, community_cards_ranks):
             print("### one match")
-            return call_bet
+            matched_card = self.get_one_match(my_cards_ranks, community_cards_ranks)
+            if self.has_one_match(matched_card, ['J', 'Q', 'K', 'A']):
+                # HAVE HIGH PAIRS
+                return call_bet
+            else:
+                return call_bet if call_bet <= 200 else 0
 
         if not community_cards and self.pay_for_community_cards(my_cards_ranks):
             print("### pay_for_community_cards")
@@ -134,9 +155,7 @@ class Player:
 
     def has_flush(self, all_cards):
         element_counts = self.count_elements(all_cards)
-        print(all_cards)
         for elem in element_counts:
-            print(elem)
             if element_counts[elem] >= 5 and (all_cards[0] == elem or all_cards[1] == elem):
                 return True
         return False
@@ -156,3 +175,6 @@ class Player:
         values_with_three = [key for key, count in element_counts.items() if count == 3]
         values_with_two = [key for key, count in element_counts.items() if count == 2]
         return len(values_with_three) == 1 and len(values_with_two) == 1
+
+    def get_one_match(self, my_card, community_card):
+        return set(my_card) & set(community_card)
