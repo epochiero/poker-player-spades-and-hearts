@@ -2,7 +2,7 @@ from collections import Counter
 
 
 class Player:
-    VERSION = "3.3"
+    VERSION = "3.4"
 
     def showdown(self, game_state):
         return ""
