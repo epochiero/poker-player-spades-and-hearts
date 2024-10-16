@@ -2,7 +2,7 @@ from collections import Counter
 
 
 class Player:
-    VERSION = "3.2"
+    VERSION = "3.3"
 
     def showdown(self, game_state):
         return ""
@@ -44,9 +44,9 @@ class Player:
         #     print("### 4 match")
         #     return self.get_bet_size(raise_bet, 8, pot_size)
 
-        if self.has_full_house(my_cards_suits, community_cards_suits):
-            print("### full house")
-            return self.get_bet_size(raise_bet, 7, pot_size)
+        #if self.has_full_house(my_cards_suits, community_cards_suits):
+        #    print("### full house")
+        #    return self.get_bet_size(raise_bet, 7, pot_size)
 
         if self.has_flush(my_cards_suits+community_cards_suits):
              print("### flush")
