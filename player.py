@@ -2,7 +2,7 @@ from collections import Counter
 
 
 class Player:
-    VERSION = "1.4"
+    VERSION = "3.0"
 
     def showdown(self, game_state):
         return ""
@@ -38,11 +38,15 @@ class Player:
         call_bet = current_buy_in - my_bet # call
         raise_bet = current_buy_in - my_bet + minimum_raise # raise
 
+        if self.has_4_match(my_cards_ranks, community_cards_ranks):
+            print("### 4 match")
+            return raise_bet * 5
+
         # if self.has_full_house(my_cards_suits, community_cards_suits):
         #     print("### full house")
         #     return raise_bet * 6
-
-        # if self.has_flush(my_cards_ranks):
+        #
+        # if self.has_flush(my_cards_suits+community_cards_suits):
         #     print("### flush")
         #     return raise_bet * 5
 
@@ -68,7 +72,11 @@ class Player:
 
         if not community_cards and self.pay_for_community_cards(my_cards_ranks):
             print("### pay_for_community_cards")
-            return call_bet
+            return call_bet if call_bet <= 200 else 0
+
+        if not community_cards and self.has_duplicates(my_cards_suits):
+            print("### pay_for_community_cards_suits")
+            return call_bet if call_bet <= 200 else 0
 
         print("### fold")
         return 0
@@ -90,23 +98,33 @@ class Player:
         values_with_three = [key for key, count in element_counts.items() if count == 3]
         return self.has_one_match(my_card, values_with_three)
 
+    def has_4_match(self, my_card, community_card):
+        element_counts = Counter(my_card + community_card)
+        values_with_three = [key for key, count in element_counts.items() if count == 4]
+        return self.has_one_match(my_card, values_with_three)
 
-    def has_straight(self, my_card, community_card):
-        all_cards = my_card + community_card
+    def get_card_value(self, rank):
         card_values = {
             '2': 2, '3': 3, '4': 4, '5': 5,
             '6': 6, '7': 7, '8': 8, '9': 9,
             '10': 10, 'J': 11, 'Q': 12, 'K': 13, 'A': 14
         }
+        return card_values.get(rank, 0)
 
-        values = sorted(card_values[card] for card in all_cards)
+    def has_straight(self, my_card, community_card):
+        all_cards = my_card + community_card
 
-        # Check for duplicates
-        if len(values) != len(set(values)):
-            return False
+        values = sorted(self.get_card_value(card) for card in all_cards)
 
-        # Check for consecutive values
-        return values[-1] - values[0] == 4 and len(values) == 5
+        # Special case for A-2-3-4-5 straight
+        if set(values[:4]) == {2, 3, 4, 5} and 14 in values:
+            return True
+
+        # Check for any sequence of 5 consecutive cards
+        for i in range(len(values) - 4):
+            if values[i + 4] - values[i] == 4:
+                return True
+        return False
 
     def has_flush(self, all_cards):
         element_counts = self.count_elements(all_cards)
